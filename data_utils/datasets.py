@@ -65,7 +65,7 @@ class EpisodicDataset(torch.utils.data.Dataset):
             self.augment_images = False
         self.transformations = None
         a = self.__getitem__(0) # initialize self.is_sim and self.transformations
-        if len(a['image_top'].shape) == 4:
+        if 'image_top' in a and len(a['image_top'].shape) == 4:
             print("%"*40)
             print("There are three views: left, right, top")
         # is_sim indicates whether the data comes from a simulation environment.
@@ -112,7 +112,7 @@ class EpisodicDataset(torch.utils.data.Dataset):
             # qpos represents the robot's position (e.g., joint angles) at the given timestamp (start_ts),
             # qvel represents the robot's velocity (e.g., joint velocities) at the same timestamp.
             # get observation at start_ts only
-            qpos = root['/observations/qpos'][start_ts]
+            qpos = root['/observations/qpos'][start_ts][:4]  # EEF xyz + gripper (pure proprioception)
             qvel = root['/observations/qvel'][start_ts]
             image_dict = dict()
             for cam_name in self.camera_names:
@@ -282,7 +282,7 @@ class LlavaPythiaProcess:
 
         images_all = torch.chunk(image, image.shape[0], dim=0)
         data_dict['image'] = images_all[0]
-        data_dict['image_r'] = images_all[1]
+        data_dict['image_r'] = images_all[1] if len(images_all) > 1 else images_all[0]
         if image.shape[0] == 3:
 
             data_dict['image_top'] = images_all[2]
@@ -342,7 +342,7 @@ def get_norm_stats(dataset_path_list):
             print(f'Error loading {dataset_path} in get_norm_stats')
             print(e)
             quit()
-        all_qpos_data.append(torch.from_numpy(qpos))
+        all_qpos_data.append(torch.from_numpy(qpos[:, :4]))  # EEF xyz + gripper only
         all_action_data.append(torch.from_numpy(action))
         all_episode_len.append(len(qpos))
     all_qpos_data = torch.cat(all_qpos_data, dim=0)

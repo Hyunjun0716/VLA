@@ -4,7 +4,7 @@ import os
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 os.environ['DEVICE'] = "cuda"
-os.environ["WANDB_DISABLED"] = "true"
+os.environ["WANDB_DISABLED"] = "false"
 
 from data_utils.datasets import load_data  # data functions
 from data_utils.datasets import compute_dict_mean, set_seed  # helper functions
@@ -27,7 +27,7 @@ local_rank = None
 class ActionArguments:
     action_head_type: str = field(default="droid_diffusion") # action head type, 'act', 'droid_diffusion'
     action_dim: int = field(default=10)
-    state_dim: int = field(default=7)
+    state_dim: int = field(default=4)
     chunk_size: int = field(default=16) # size of action chunk, same as mobile aloha
 
 @dataclass
@@ -201,7 +201,7 @@ def train_bc(train_dataset=None, val_dataset=None, model=None, config=None, samp
                                  sampler_params=sampler_params,
                                  **data_module)
 
-    trainer.train()
+    trainer.train(resume_from_checkpoint=config['training_args'].resume_from_checkpoint)
 
     trainer.save_state()
 

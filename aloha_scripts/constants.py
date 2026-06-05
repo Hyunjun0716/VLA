@@ -3,6 +3,26 @@
 
 # DATA_DIR = '/path/to/your/data_dir'
 
+METAWORLD_DATA_DIR = '/home/jun/data/metaworld/camera_coner2' # for local debug
+
+METAWORLD_TASKS = [
+    'assembly-v3', 'basketball-v3', 'bin-picking-v3', 'box-close-v3',
+    'button-press-topdown-v3', 'button-press-topdown-wall-v3',
+    'button-press-v3', 'button-press-wall-v3', 'coffee-button-v3',
+    'coffee-pull-v3', 'coffee-push-v3', 'dial-turn-v3', 'disassemble-v3',
+    'door-close-v3', 'door-lock-v3', 'door-open-v3', 'door-unlock-v3',
+    'hand-insert-v3', 'drawer-close-v3', 'drawer-open-v3',
+    'faucet-open-v3', 'faucet-close-v3', 'hammer-v3',
+    'handle-press-side-v3', 'handle-press-v3', 'handle-pull-side-v3',
+    'handle-pull-v3', 'lever-pull-v3', 'pick-place-wall-v3',
+    'pick-out-of-hole-v3', 'pick-place-v3', 'plate-slide-v3',
+    'plate-slide-side-v3', 'plate-slide-back-v3', 'plate-slide-back-side-v3',
+    'peg-insert-side-v3', 'peg-unplug-side-v3', 'soccer-v3',
+    'stick-push-v3', 'stick-pull-v3', 'push-v3', 'push-wall-v3',
+    'push-back-v3', 'reach-v3', 'reach-wall-v3', 'shelf-place-v3',
+    'sweep-into-v3', 'sweep-v3', 'window-open-v3', 'window-close-v3',
+]
+
 TASK_CONFIGS = {
     'example_task_config': { # for local debug
         'dataset_dir': [
@@ -10,6 +30,13 @@ TASK_CONFIGS = {
         ],
         'episode_len': 1000,  # 1000,
         'camera_names': ['left', 'right', 'wrist'] # corresponding to image keys saved in h5py files
+    },
+
+    # ── MetaWorld MT50 (50 tasks × 50 demos, action_dim=4, state_dim=7) ──────
+    'metaworld_mt50': {
+        'dataset_dir': [f'{METAWORLD_DATA_DIR}/{t}' for t in METAWORLD_TASKS],
+        'episode_len': 500,
+        'camera_names': ['front'],
     },
 }
 ####################################################################################
